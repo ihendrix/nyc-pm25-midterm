@@ -3,12 +3,18 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
 
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from sklearn.preprocessing import StandardScaler
 
+
+
+# Always load files relative to this app.py file.
+# This makes the app work both locally and on Streamlit Cloud.
+BASE_DIR = Path(__file__).resolve().parent
 
 # =========================================================
 # PAGE SETTINGS
@@ -31,7 +37,7 @@ page = st.sidebar.selectbox(
 @st.cache_data
 def load_data():
     # Air quality
-    aqi = pd.read_csv("ad_aqi_tracker_data.csv")
+    aqi = pd.read_csv(BASE_DIR / "ad_aqi_tracker_data.csv")
     aqi["Date"] = pd.to_datetime(aqi["Date"])
     aqi = aqi.sort_values("Date").reset_index(drop=True)
 
@@ -39,7 +45,7 @@ def load_data():
     aqi["Previous-Day AQI"] = aqi["PM2.5 AQI Value"].shift(1)
 
     # Traffic
-    traffic = pd.read_csv("Automated_Traffic_Volume_Counts_20261005.csv")
+    traffic = pd.read_csv(BASE_DIR / "Automated_Traffic_Volume_Counts_20261005.csv")
     traffic["Date"] = pd.to_datetime(
         dict(
             year=traffic["Yr"],
@@ -56,7 +62,7 @@ def load_data():
 
     # Weather
     weather = pd.read_csv(
-        "open-meteo-40.74N74.04W51m.csv",
+        BASE_DIR / "open-meteo-40.74N74.04W51m.csv",
         skiprows=3
     )
     weather["time"] = pd.to_datetime(weather["time"])
